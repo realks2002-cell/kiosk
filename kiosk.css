@@ -1,0 +1,60 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+:root{
+  --primary:#12a594; --primary-hover:#0d9b8a; --primary-active:#008573; --primary-soft:#e0f8f3;
+  --accent:#f76b15; --accent-soft:#fff1e6; --accent-fg:#cc4e00;
+  --background:#f7f9f8; --surface:#fff; --soft:#eef1f0;
+  --line:#d7dad9; --muted-fg:#5f6563; --ink:#1a211e;
+  --success:#10b981; --success-bg:#ecfdf5; --success-fg:#047857; --success-soft:#d1fae5;
+  --warning:#f59e0b; --warning-bg:#fffbeb; --warning-fg:#b45309; --warning-soft:#fef3c7;
+  --danger:#ef4444; --danger-bg:#fef2f2; --danger-fg:#b91c1c; --danger-soft:#fee2e2;
+  --info:#0090ff; --info-bg:#e6f4fe; --info-fg:#0d74ce; --info-soft:#d5efff;
+  --ring:rgba(18,165,148,.45);
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Pretendard',sans-serif;background:#c8cfcd;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;}
+.screen{width:1280px;height:800px;background:var(--background);overflow:hidden;
+  position:relative;display:flex;flex-direction:column;}
+
+/* top bar */
+.topbar{height:84px;flex-shrink:0;display:flex;align-items:center;
+  padding:0 32px;background:var(--surface);border-bottom:1px solid var(--line);}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;margin-right:12px;}
+.brand{font-size:20px;font-weight:700;letter-spacing:-0.01em;}
+.brand small{display:block;font-size:12px;font-weight:500;color:var(--muted-fg);letter-spacing:.04em;}
+.spacer{flex:1;}
+.clock{text-align:right;font-size:14px;color:var(--muted-fg);margin-right:16px;}
+.clock b{display:block;font-size:18px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+.pill{display:inline-flex;align-items:center;gap:7px;background:var(--primary-soft);
+  color:var(--primary-active);font-size:14px;font-weight:600;padding:9px 14px;border-radius:999px;}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);}
+
+/* back btn */
+.back{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);
+  background:#fff;border-radius:var(--r-md);padding:11px 16px;font:inherit;font-size:15px;
+  font-weight:600;color:var(--ink);cursor:pointer;margin-right:16px;}
+.title{font-size:22px;font-weight:700;letter-spacing:-0.01em;}
+
+/* chip (student) */
+.stuchip{display:inline-flex;align-items:center;gap:10px;background:var(--surface);
+  border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 6px;}
+.stuchip .ava{width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+.stuchip .nm{font-size:15px;font-weight:600;}
+.stuchip .nm small{display:block;font-size:12px;font-weight:500;color:var(--muted-fg);}
+
+/* buttons */
+.btn{border:none;border-radius:var(--r-md);font:inherit;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:.15s;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-outline{background:#fff;border:1.5px solid var(--line);color:var(--ink);}
+.btn-lg{padding:16px 28px;font-size:18px;}
+.btn-block{width:100%;padding:18px;font-size:19px;}
+
+.lucide{width:24px;height:24px;stroke-width:2;}

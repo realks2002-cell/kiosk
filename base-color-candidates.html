@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학원 키오스크 — 베이스 색 후보</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Pretendard',-apple-system,sans-serif;
+    background:#f7f8fa; color:#1a1d24; padding:48px 32px 64px;
+  }
+  .head { max-width:1100px; margin:0 auto 40px; }
+  .head h1 { font-size:31px; font-weight:700; letter-spacing:-0.02em; }
+  .head p { font-size:16px; color:#5b616e; margin-top:8px; }
+  .grid {
+    max-width:1100px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(2,1fr); gap:24px;
+  }
+  .card {
+    background:#fff; border:1px solid #e6e8ec; border-radius:16px;
+    overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .hero {
+    height:140px; display:flex; align-items:flex-end; padding:18px 20px;
+    color:#fff;
+  }
+  .hero .name { font-size:20px; font-weight:700; }
+  .hero .hex { font-size:13px; font-weight:500; opacity:.9; margin-left:auto;
+    font-variant-numeric:tabular-nums; }
+  .body { padding:20px; }
+  .desc { font-size:14px; color:#5b616e; line-height:1.5; margin-bottom:16px; min-height:42px; }
+  .scale { display:flex; border-radius:8px; overflow:hidden; margin-bottom:18px; }
+  .scale span { flex:1; height:36px; }
+  .preview { display:flex; gap:10px; align-items:center; }
+  .btn {
+    border:none; border-radius:10px; padding:12px 18px;
+    font-family:inherit; font-size:15px; font-weight:600; color:#fff;
+    cursor:pointer;
+  }
+  .chip {
+    display:inline-flex; align-items:center; gap:6px;
+    border-radius:999px; padding:6px 12px; font-size:13px; font-weight:600;
+  }
+  .role { display:flex; gap:6px; margin-top:16px; flex-wrap:wrap; }
+  .role b {
+    font-size:11px; font-weight:600; color:#8a909c;
+    font-variant-numeric:tabular-nums;
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>학원 키오스크 — 베이스 색 후보</h1>
+    <p>친근하고 밝은 톤 / 모두 Radix Colors 기반. 마음에 드는 베이스 색 하나를 골라주세요. → 그 색으로 전체 팔레트를 만듭니다.</p>
+  </div>
+  <div class="grid">
+
+    <!-- 1. Sky Blue -->
+    <div class="card">
+      <div class="hero" style="background:#0090ff;">
+        <span class="name">① 청량 블루</span>
+        <span class="hex">#0090FF</span>
+      </div>
+      <div class="body">
+        <p class="desc">밝고 시원한 파랑. 신뢰감 + 활기. 남녀·연령 모두 무난하고 가장 안전한 선택.</p>
+        <div class="scale">
+          <span style="background:#e6f4fe"></span><span style="background:#d5efff"></span>
+          <span style="background:#c2e5ff"></span><span style="background:#8ec8f6"></span>
+          <span style="background:#5eb1ef"></span><span style="background:#0090ff"></span>
+          <span style="background:#0588f0"></span><span style="background:#0d74ce"></span>
+          <span style="background:#113264"></span>
+        </div>
+        <div class="preview">
+          <button class="btn" style="background:#0090ff;">등원 체크인</button>
+          <span class="chip" style="background:#e6f4fe; color:#0d74ce;">빈자리</span>
+        </div>
+        <div class="role"><b>step3 배경</b><b>·</b><b>step9 solid</b><b>·</b><b>step11 텍스트</b></div>
+      </div>
+    </div>
+
+    <!-- 2. Mint Teal -->
+    <div class="card">
+      <div class="hero" style="background:#12a594;">
+        <span class="name">② 산뜻 민트</span>
+        <span class="hex">#12A594</span>
+      </div>
+      <div class="body">
+        <p class="desc">청록/민트. 산뜻하고 긍정적, 차분하면서도 밝음. 성장·집중 이미지에 좋음.</p>
+        <div class="scale">
+          <span style="background:#e0f8f3"></span><span style="background:#ccf3ea"></span>
+          <span style="background:#b8eae0"></span><span style="background:#a1ded2"></span>
+          <span style="background:#83cdc1"></span><span style="background:#12a594"></span>
+          <span style="background:#0d9b8a"></span><span style="background:#008573"></span>
+          <span style="background:#0d3d38"></span>
+        </div>
+        <div class="preview">
+          <button class="btn" style="background:#12a594;">등원 체크인</button>
+          <span class="chip" style="background:#e0f8f3; color:#008573;">빈자리</span>
+        </div>
+        <div class="role"><b>step3 배경</b><b>·</b><b>step9 solid</b><b>·</b><b>step11 텍스트</b></div>
+      </div>
+    </div>
+
+    <!-- 3. Coral Orange -->
+    <div class="card">
+      <div class="hero" style="background:#f76b15;">
+        <span class="name">③ 따뜻 코랄</span>
+        <span class="hex">#F76B15</span>
+      </div>
+      <div class="body">
+        <p class="desc">따뜻한 주황. 가장 친근하고 에너지틱. 어린이·초등 대상에 특히 잘 어울림.</p>
+        <div class="scale">
+          <span style="background:#ffefd6"></span><span style="background:#ffdfb5"></span>
+          <span style="background:#ffd19a"></span><span style="background:#ffc182"></span>
+          <span style="background:#f5ae73"></span><span style="background:#f76b15"></span>
+          <span style="background:#ef5f00"></span><span style="background:#cc4e00"></span>
+          <span style="background:#582d1d"></span>
+        </div>
+        <div class="preview">
+          <button class="btn" style="background:#f76b15;">등원 체크인</button>
+          <span class="chip" style="background:#ffefd6; color:#cc4e00;">빈자리</span>
+        </div>
+        <div class="role"><b>step3 배경</b><b>·</b><b>step9 solid</b><b>·</b><b>step11 텍스트</b></div>
+      </div>
+    </div>
+
+    <!-- 4. Bright Violet -->
+    <div class="card">
+      <div class="hero" style="background:#6e56cf;">
+        <span class="name">④ 경쾌 바이올렛</span>
+        <span class="hex">#6E56CF</span>
+      </div>
+      <div class="body">
+        <p class="desc">밝은 보라. 경쾌하고 트렌디. 요즘 감성, 차별화된 톤을 원할 때.</p>
+        <div class="scale">
+          <span style="background:#f4f0fe"></span><span style="background:#ebe4ff"></span>
+          <span style="background:#e1d9ff"></span><span style="background:#d4cafe"></span>
+          <span style="background:#c2b5f5"></span><span style="background:#6e56cf"></span>
+          <span style="background:#654dc4"></span><span style="background:#6550b9"></span>
+          <span style="background:#2f265f"></span>
+        </div>
+        <div class="preview">
+          <button class="btn" style="background:#6e56cf;">등원 체크인</button>
+          <span class="chip" style="background:#f4f0fe; color:#6550b9;">빈자리</span>
+        </div>
+        <div class="role"><b>step3 배경</b><b>·</b><b>step9 solid</b><b>·</b><b>step11 텍스트</b></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

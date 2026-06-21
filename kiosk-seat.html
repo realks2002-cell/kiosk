@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>키오스크 — 자습실 자리 예약</title>
+<link rel="stylesheet" href="kiosk.css">
+<style>
+  .body{flex:1;display:flex;flex-direction:column;padding:22px 32px 26px;min-height:0;}
+  .head2{display:flex;align-items:center;margin-bottom:16px;}
+  .head2 .spacer{flex:1;}
+  /* room tabs */
+  .tabs{display:flex;gap:6px;background:var(--soft);padding:5px;border-radius:var(--r-md);margin-bottom:18px;width:fit-content;}
+  .tab{padding:11px 22px;border-radius:var(--r-sm);font-size:16px;font-weight:600;cursor:pointer;color:var(--muted-fg);
+    display:flex;align-items:center;gap:8px;}
+  .tab.on{background:#fff;color:var(--primary-active);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .tab small{font-size:12px;font-weight:500;opacity:.8;}
+
+  .main{flex:1;display:grid;grid-template-columns:1fr 320px;gap:20px;min-height:0;}
+
+  /* seat area */
+  .room{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);
+    padding:22px;display:flex;flex-direction:column;}
+  .front{text-align:center;font-size:13px;font-weight:600;color:var(--muted-fg);letter-spacing:.1em;
+    background:var(--soft);border-radius:8px;padding:9px;margin-bottom:20px;}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,1fr);
+    gap:12px;flex:1;min-height:0;}
+  .seat{border-radius:var(--r-md);border:1.5px solid transparent;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    font-size:18px;font-weight:700;cursor:pointer;transition:.12s;position:relative;}
+  .seat small{font-size:11px;font-weight:500;}
+  .seat.free{background:#fff;color:var(--ink);border-color:var(--line);}
+  .seat.free:hover{border-color:var(--primary);background:var(--primary-soft);}
+  .seat.used{background:var(--primary-soft);color:var(--ink);border-color:#bfeae1;cursor:not-allowed;}
+  .seat.mine{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 14px rgba(18,165,148,.35);}
+  .seat.block{background:var(--soft);color:var(--ink);cursor:not-allowed;}
+  .seat .pin{position:absolute;top:7px;right:8px;}
+
+  .legend{display:flex;gap:18px;justify-content:center;margin-top:18px;font-size:13px;color:var(--muted-fg);}
+  .legend span{display:flex;align-items:center;gap:7px;}
+  .legend i{width:15px;height:15px;border-radius:5px;display:inline-block;}
+
+  /* side panel */
+  .side{display:flex;flex-direction:column;gap:14px;min-height:0;}
+  .scard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;}
+  .scard h3{font-size:13px;font-weight:600;color:var(--muted-fg);margin-bottom:12px;letter-spacing:.02em;}
+  .status .bar{height:9px;background:var(--soft);border-radius:99px;overflow:hidden;margin:10px 0 8px;}
+  .status .bar i{display:block;height:100%;width:60%;background:var(--primary);border-radius:99px;}
+  .status .num{font-size:15px;font-weight:600;}
+  .status .num b{color:var(--primary-active);font-size:22px;}
+  .selbox{display:flex;align-items:center;gap:14px;}
+  .selbox .s{width:60px;height:60px;border-radius:14px;background:var(--primary);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;}
+  .selbox .t b{font-size:19px;font-weight:700;}
+  .selbox .t span{display:block;font-size:13px;color:var(--muted-fg);margin-top:2px;}
+  .times{display:flex;flex-direction:column;gap:9px;}
+  .time{border:1.5px solid var(--line);border-radius:var(--r-md);padding:13px 15px;font-size:15px;
+    font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;}
+  .time.on{border-color:var(--primary);background:var(--primary-soft);color:var(--primary-active);}
+  .time small{font-size:12px;font-weight:500;color:var(--muted-fg);}
+  .time.on small{color:var(--primary-active);}
+  .confirm{margin-top:auto;}
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="topbar">
+    <div class="logo"><i data-lucide="graduation-cap" class="lucide"></i></div>
+    <div class="brand">국풍국어학원<small>신갈관</small></div>
+    <div class="spacer"></div>
+    <div class="clock"><span>2026년 6월 21일 (일)</span><b>오후 4:20</b></div>
+    <div class="stuchip"><div class="ava">서</div><div class="nm">이서연<small>고2 · 정규반</small></div></div>
+  </div>
+
+  <div class="body">
+    <div class="head2">
+      <button class="back"><i data-lucide="chevron-left" class="lucide" style="width:20px;height:20px"></i>처음으로</button>
+      <span class="title">자습실 자리 예약</span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on"><i data-lucide="armchair" style="width:18px;height:18px"></i>1자습실 <small>8/20 남음</small></div>
+      <div class="tab"><i data-lucide="armchair" style="width:18px;height:18px"></i>2자습실 <small>10/16 남음</small></div>
+    </div>
+
+    <div class="main">
+      <!-- seat grid: 1자습실 4x5 = 20 -->
+      <div class="room">
+        <div class="front">━━  입 구 · 관 리 석  ━━</div>
+        <div class="grid">
+          <div class="seat used">01</div>
+          <div class="seat free">02</div>
+          <div class="seat used">03</div>
+          <div class="seat free">04</div>
+
+          <div class="seat free">05</div>
+          <div class="seat used">06</div>
+          <div class="seat used">07</div>
+          <div class="seat free">08</div>
+
+          <div class="seat used">09</div>
+          <div class="seat used">10</div>
+          <div class="seat free">11</div>
+          <div class="seat used">12</div>
+
+          <div class="seat free">13</div>
+          <div class="seat mine">14<small>선택</small></div>
+          <div class="seat used">15</div>
+          <div class="seat used">16</div>
+
+          <div class="seat free">17</div>
+          <div class="seat used">18</div>
+          <div class="seat block">19<small>점검</small></div>
+          <div class="seat free">20</div>
+        </div>
+        <div class="legend">
+          <span><i style="background:#fff;border:1.5px solid var(--line)"></i>빈자리</span>
+          <span><i style="background:var(--primary-soft);border:1.5px solid #bfeae1"></i>사용중</span>
+          <span><i style="background:var(--primary)"></i>내 선택</span>
+          <span><i style="background:var(--soft)"></i>점검중</span>
+        </div>
+      </div>
+
+      <!-- side -->
+      <div class="side">
+        <div class="scard status">
+          <h3>1자습실 현황</h3>
+          <div class="num"><b>8</b>석 남음 <span style="color:var(--muted-fg);font-size:13px">/ 20석</span></div>
+          <div class="bar"><i></i></div>
+        </div>
+
+        <div class="scard">
+          <h3>선택한 자리</h3>
+          <div class="selbox">
+            <div class="s">14</div>
+            <div class="t"><b>1자습실 14번</b><span>창가 두 번째 줄</span></div>
+          </div>
+        </div>
+
+        <div class="scard" style="flex:1;display:flex;flex-direction:column">
+          <h3>이용 시간</h3>
+          <div class="times">
+            <div class="time"><span>지금부터 2시간</span><small>~18:20</small></div>
+            <div class="time on"><span>오후 10시까지</span><small><i data-lucide="check" style="width:16px;height:16px;vertical-align:-3px"></i> 마감시간</small></div>
+            <div class="time"><span>직접 선택</span><small>시간 지정</small></div>
+          </div>
+          <button class="btn btn-primary btn-block confirm">14번 자리 예약하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

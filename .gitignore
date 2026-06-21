@@ -1,0 +1,7 @@
+# 검증용 스크린샷 / Playwright 산출물
+*.png
+.playwright-mcp/
+.DS_Store
+
+# bkit 내부 산출물
+docs/

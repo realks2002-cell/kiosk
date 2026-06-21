@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학원 키오스크 — 컴포넌트 미리보기</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --primary:#12a594; --primary-hover:#0d9b8a; --primary-active:#008573; --primary-soft:#e0f8f3;
+    --accent:#f76b15; --accent-soft:#fff1e6; --accent-fg:#cc4e00;
+    --background:#f7f9f8; --surface:#fff; --soft:#eef1f0;
+    --line:#d7dad9; --muted-fg:#5f6563; --ink:#1a211e;
+    --success:#10b981; --success-bg:#ecfdf5; --success-fg:#047857; --success-soft:#d1fae5;
+    --warning:#f59e0b; --warning-bg:#fffbeb; --warning-fg:#b45309; --warning-soft:#fef3c7;
+    --danger:#ef4444; --danger-bg:#fef2f2; --danger-fg:#b91c1c; --danger-soft:#fee2e2;
+    --info:#0090ff; --info-bg:#e6f4fe; --info-fg:#0d74ce; --info-soft:#d5efff;
+    --ring:rgba(18,165,148,.45);
+    --r-sm:8px; --r-md:12px; --r-lg:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Pretendard',sans-serif;background:var(--background);color:var(--ink);padding:48px 32px 96px;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  h1{font-size:31px;font-weight:700;letter-spacing:-0.02em;}
+  .sub{font-size:16px;color:var(--muted-fg);margin:8px 0 8px;}
+  h2{font-size:20px;font-weight:600;letter-spacing:-0.01em;margin:44px 0 16px;
+     padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;}
+  h2 .tag{font-size:11px;font-weight:600;color:var(--primary-active);background:var(--primary-soft);
+     padding:3px 8px;border-radius:999px;}
+  h3{font-size:13px;font-weight:600;color:var(--muted-fg);margin:18px 0 10px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+  /* ---- Buttons (kiosk: big touch) ---- */
+  .btn{border:none;border-radius:var(--r-md);font-family:inherit;font-weight:600;cursor:pointer;
+       transition:background .15s,transform .1s;display:inline-flex;align-items:center;gap:8px;}
+  .btn:active{transform:scale(.98);}
+  .btn-lg{padding:16px 26px;font-size:18px;}
+  .btn-md{padding:12px 18px;font-size:15px;}
+  .btn-sm{padding:9px 14px;font-size:13px;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-hover);}
+  .btn-accent{background:var(--accent);color:#fff;}
+  .btn-accent:hover{filter:brightness(.95);}
+  .btn-outline{background:#fff;border:1.5px solid var(--line);color:var(--ink);}
+  .btn-outline:hover{background:var(--soft);}
+  .btn-ghost{background:transparent;color:var(--ink);}
+  .btn-ghost:hover{background:var(--soft);}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn-danger:hover{background:var(--danger-fg);}
+  .btn:disabled{background:var(--soft);color:#a8aeac;cursor:not-allowed;border-color:var(--line);}
+  .btn.focusring{outline:3px solid var(--ring);outline-offset:2px;}
+
+  /* ---- Numpad (kiosk core) ---- */
+  .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:300px;}
+  .key{height:72px;border:1.5px solid var(--line);background:#fff;border-radius:var(--r-md);
+       font-family:inherit;font-size:26px;font-weight:600;color:var(--ink);cursor:pointer;transition:.12s;}
+  .key:hover{background:var(--primary-soft);border-color:var(--primary);}
+  .key:active{transform:scale(.96);}
+  .key.del{font-size:18px;color:var(--muted-fg);}
+  .key.ok{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .pinview{display:flex;gap:14px;margin-bottom:18px;}
+  .pinview i{width:18px;height:18px;border-radius:50%;background:var(--line);}
+  .pinview i.on{background:var(--primary);}
+
+  /* ---- Inputs ---- */
+  .field{margin-bottom:16px;max-width:360px;}
+  .field label{display:block;font-size:14px;font-weight:600;margin-bottom:6px;}
+  .input{width:100%;border:1.5px solid var(--line);border-radius:var(--r-md);padding:14px 16px;
+         font-size:16px;font-family:inherit;color:var(--ink);background:#fff;}
+  .input::placeholder{color:#a8aeac;}
+  .input.focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--ring);outline:none;}
+  .input.err{border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft);}
+  .hint{font-size:13px;margin-top:6px;}
+  .hint.err{color:var(--danger-fg);}
+
+  /* ---- Badge (badge-2 shadcn standard) ---- */
+  .bdg{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;
+       font-weight:500;gap:6px;line-height:1;}
+  .bdg.lg{border-radius:6px;padding:0 8px;height:28px;font-size:12px;}
+  .bdg.md{border-radius:6px;padding:0 7px;height:24px;font-size:12px;}
+  .bdg.sm{border-radius:4px;padding:0 5px;height:20px;font-size:11px;}
+  .bdg.xs{border-radius:4px;padding:0 4px;height:16px;font-size:10px;}
+  .bdg .bd-dot{width:7px;height:7px;border-radius:50%;}
+  .bdg .bd-x{margin-left:2px;opacity:.6;font-weight:700;cursor:pointer;}
+  /* solid (default) */
+  .bdg.primary{background:var(--primary);color:#fff;}
+  .bdg.success{background:var(--success);color:#fff;}
+  .bdg.warning{background:var(--warning);color:#fff;}
+  .bdg.danger{background:var(--danger);color:#fff;}
+  .bdg.info{background:var(--info);color:#fff;}
+  .bdg.secondary{background:var(--soft);color:var(--ink);}
+  /* light */
+  .bdg.light.primary{background:var(--primary-soft);color:var(--primary-active);}
+  .bdg.light.success{background:var(--success-soft);color:var(--success-fg);}
+  .bdg.light.warning{background:var(--warning-soft);color:var(--warning-fg);}
+  .bdg.light.danger{background:var(--danger-soft);color:var(--danger-fg);}
+  .bdg.light.info{background:var(--info-soft);color:var(--info-fg);}
+  /* outline */
+  .bdg.outline{background:transparent;border-color:var(--line);color:var(--muted-fg);}
+  .bdg.outline.primary{border-color:var(--primary);color:var(--primary-active);}
+  /* ghost */
+  .bdg.ghost{background:transparent;border-color:transparent;}
+  .bdg.ghost.primary{color:var(--primary-active);}
+  .bdg.ghost.danger{color:var(--danger-fg);}
+
+  /* ---- Seat chips ---- */
+  .seatlegend{display:flex;gap:10px;flex-wrap:wrap;}
+  .seat{width:62px;height:62px;border-radius:var(--r-md);display:flex;flex-direction:column;
+        align-items:center;justify-content:center;font-size:13px;font-weight:600;gap:2px;border:1.5px solid transparent;}
+  .seat small{font-size:10px;font-weight:500;opacity:.8;}
+  .seat.free{background:var(--primary-soft);color:var(--primary-active);border-color:var(--primary);}
+  .seat.used{background:var(--danger-bg);color:var(--danger-fg);border-color:var(--danger-soft);}
+  .seat.mine{background:var(--accent-soft);color:var(--accent-fg);border-color:var(--accent);}
+  .seat.block{background:var(--soft);color:#a8aeac;}
+
+  /* ---- Student select card ---- */
+  .stu{display:flex;align-items:center;gap:14px;border:1.5px solid var(--line);border-radius:var(--r-md);
+       padding:14px 16px;cursor:pointer;background:#fff;transition:.12s;min-width:240px;}
+  .stu:hover{border-color:var(--primary);background:var(--primary-soft);}
+  .stu .ava{width:46px;height:46px;border-radius:50%;background:var(--primary);color:#fff;
+       display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;}
+  .stu .nm{font-size:17px;font-weight:600;}
+  .stu .meta{font-size:13px;color:var(--muted-fg);margin-top:2px;}
+
+  /* ---- Alerts ---- */
+  .alert{display:flex;gap:10px;align-items:center;border-radius:var(--r-md);padding:14px 16px;
+         font-size:15px;font-weight:500;border:1px solid;margin-bottom:10px;}
+  .alert .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+  .alert.s{background:var(--success-bg);border-color:var(--success-soft);color:var(--success-fg);}
+  .alert.w{background:var(--warning-bg);border-color:var(--warning-soft);color:var(--warning-fg);}
+  .alert.d{background:var(--danger-bg);border-color:var(--danger-soft);color:var(--danger-fg);}
+  .alert.i{background:var(--info-bg);border-color:var(--info-soft);color:var(--info-fg);}
+
+  /* ---- Tabs ---- */
+  .tabs{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:var(--r-md);width:fit-content;}
+  .tab{padding:10px 20px;border-radius:var(--r-sm);font-size:15px;font-weight:600;cursor:pointer;color:var(--muted-fg);}
+  .tab.on{background:#fff;color:var(--primary-active);box-shadow:0 1px 3px rgba(0,0,0,.06);}
+
+  .label{font-size:12px;color:var(--muted-fg);margin-top:6px;display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>학원 키오스크 — 컴포넌트 미리보기</h1>
+  <p class="sub">민트 토큰을 실제 컴포넌트에 입힌 키친싱크 · 큰 터치 UI 기준 · 배지는 badge-2(shadcn) 표준</p>
+
+  <!-- BUTTONS -->
+  <h2>버튼 <span class="tag">상태 포함</span></h2>
+  <div class="card">
+    <h3>Variant (lg)</h3>
+    <div class="row">
+      <button class="btn btn-lg btn-primary">등원 체크인</button>
+      <button class="btn btn-lg btn-accent">자습실 자리</button>
+      <button class="btn btn-lg btn-outline">하원</button>
+      <button class="btn btn-lg btn-ghost">취소</button>
+      <button class="btn btn-lg btn-danger">예약 취소</button>
+    </div>
+    <h3>크기 (md / sm)</h3>
+    <div class="row">
+      <button class="btn btn-md btn-primary">중간 버튼</button>
+      <button class="btn btn-sm btn-primary">작은 버튼</button>
+      <button class="btn btn-md btn-outline">중간 아웃라인</button>
+    </div>
+    <h3>상태: hover(좌2 기준) / focus-visible / disabled</h3>
+    <div class="row">
+      <button class="btn btn-lg btn-primary" style="background:var(--primary-hover)">hover 상태</button>
+      <button class="btn btn-lg btn-primary focusring">focus-visible</button>
+      <button class="btn btn-lg btn-primary" disabled>disabled</button>
+    </div>
+  </div>
+
+  <!-- NUMPAD -->
+  <h2>숫자 키패드 <span class="tag">키오스크 핵심 — 번호 입력</span></h2>
+  <div class="card" style="display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start">
+    <div>
+      <h3>전화번호 뒷 4자리 입력</h3>
+      <div class="pinview"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+      <div class="numpad">
+        <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+        <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+        <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+        <button class="key del">⌫</button><button class="key">0</button><button class="key ok">✓</button>
+      </div>
+    </div>
+    <div>
+      <h3>키 상태</h3>
+      <div class="row" style="gap:12px">
+        <button class="key" style="width:72px">5</button>
+        <button class="key" style="width:72px;background:var(--primary-soft);border-color:var(--primary)">hover</button>
+        <button class="key ok" style="width:72px">✓</button>
+      </div>
+      <span class="label">hover 시 민트 소프트 배경 · 확인키는 Primary solid</span>
+    </div>
+  </div>
+
+  <!-- INPUTS -->
+  <h2>입력 / 폼 <span class="tag">normal · focus · error</span></h2>
+  <div class="card grid2">
+    <div>
+      <div class="field"><label>학생 이름</label><input class="input" placeholder="이름을 입력하세요"></div>
+      <div class="field"><label>전화번호 (focus 상태)</label><input class="input focus" value="010-1234"></div>
+    </div>
+    <div>
+      <div class="field"><label>PIN (error 상태)</label><input class="input err" value="0000">
+        <span class="hint err">PIN이 일치하지 않습니다.</span></div>
+      <div class="field"><label>비활성</label><input class="input" value="자동 입력됨" disabled style="background:var(--soft);color:var(--muted-fg)"></div>
+    </div>
+  </div>
+
+  <!-- BADGES -->
+  <h2>배지 <span class="tag">badge-2 (shadcn) 표준</span></h2>
+  <div class="card">
+    <h3>Solid (appearance: default)</h3>
+    <div class="row">
+      <span class="bdg lg primary">Primary</span>
+      <span class="bdg lg success">출석</span>
+      <span class="bdg lg warning">지각</span>
+      <span class="bdg lg danger">결석</span>
+      <span class="bdg lg info">정보</span>
+      <span class="bdg lg secondary">대기</span>
+    </div>
+    <h3>Light (appearance: light) — 가장 많이 쓰는 형태</h3>
+    <div class="row">
+      <span class="bdg lg light primary">수강중</span>
+      <span class="bdg lg light success">출석완료</span>
+      <span class="bdg lg light warning">지각</span>
+      <span class="bdg lg light danger">미등원</span>
+      <span class="bdg lg light info">신규</span>
+    </div>
+    <h3>Outline / Ghost</h3>
+    <div class="row">
+      <span class="bdg lg outline">기본</span>
+      <span class="bdg lg outline primary">Primary</span>
+      <span class="bdg lg ghost primary">Ghost</span>
+      <span class="bdg lg ghost danger">Ghost 위험</span>
+    </div>
+    <h3>BadgeDot (상태점) · BadgeButton (닫기)</h3>
+    <div class="row">
+      <span class="bdg lg light success"><span class="bd-dot" style="background:var(--success)"></span>등원</span>
+      <span class="bdg lg light danger"><span class="bd-dot" style="background:var(--danger)"></span>하원</span>
+      <span class="bdg lg light primary">A반 <span class="bd-x">×</span></span>
+      <span class="bdg lg light info">수학 <span class="bd-x">×</span></span>
+    </div>
+    <h3>크기 (lg / md / sm / xs)</h3>
+    <div class="row">
+      <span class="bdg lg light primary">LG</span>
+      <span class="bdg md light primary">MD</span>
+      <span class="bdg sm light primary">SM</span>
+      <span class="bdg xs light primary">XS</span>
+    </div>
+  </div>
+
+  <!-- SEAT CHIPS -->
+  <h2>좌석 칩 <span class="tag">자습실 좌석맵용</span></h2>
+  <div class="card">
+    <div class="seatlegend">
+      <div class="seat free">A-1<small>빈자리</small></div>
+      <div class="seat used">A-2<small>사용중</small></div>
+      <div class="seat mine">A-3<small>내 자리</small></div>
+      <div class="seat block">A-4<small>막힘</small></div>
+    </div>
+    <span class="label">빈자리=민트 소프트 / 사용중=red / 내 자리=코랄 accent / 막힘=중립 비활성</span>
+  </div>
+
+  <!-- STUDENT CARDS -->
+  <h2>학생 선택 카드 <span class="tag">동명이인 구분</span></h2>
+  <div class="card row" style="gap:14px">
+    <div class="stu"><div class="ava">민</div><div><div class="nm">김민준</div><div class="meta">초등 A반 · 010-····-1234</div></div></div>
+    <div class="stu"><div class="ava" style="background:var(--accent)">서</div><div><div class="nm">이서연</div><div class="meta">중등 B반 · 010-····-5678</div></div></div>
+  </div>
+
+  <!-- ALERTS + TABS -->
+  <h2>알림 · 탭 <span class="tag">피드백</span></h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="alert s"><span class="dot" style="background:var(--success)"></span>김민준 학생이 15:24 등원했습니다.</div>
+      <div class="alert w"><span class="dot" style="background:var(--warning)"></span>수업 시작 10분 전입니다.</div>
+      <div class="alert d"><span class="dot" style="background:var(--danger)"></span>예약 시간이 곧 종료됩니다.</div>
+      <div class="alert i"><span class="dot" style="background:var(--info)"></span>오늘 자습 가능 좌석 12석.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">탭</h3>
+      <div class="tabs">
+        <div class="tab on">강의실 A</div>
+        <div class="tab">강의실 B</div>
+        <div class="tab">독서실</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국풍국어학원 키오스크 — 컬러 팔레트 (현재 기준)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --primary:#2563eb; --primary-hover:#1d4ed8; --primary-active:#1e40af; --primary-soft:#eaf2fe;
+    --accent:#f76b15; --accent-soft:#fff1e6; --accent-fg:#cc4e00;
+    --surface:#fff; --soft:#eef1f0; --line:#d7dad9; --muted:#5f6563; --ink:#1a211e;
+    --canvas:radial-gradient(140% 120% at 70% 12%, #2f63d6 0%, #2654c2 55%, #2046a6 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Pretendard',sans-serif;background:#eef1f3;color:var(--ink);padding:44px 32px 72px;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  h1{font-size:31px;font-weight:700;letter-spacing:-0.02em;}
+  .sub{font-size:16px;color:var(--muted);margin:8px 0 36px;}
+  h2{font-size:20px;font-weight:600;margin:36px 0 14px;display:flex;align-items:center;gap:8px;}
+  h2 .tag{font-size:11px;font-weight:600;color:var(--primary-active);background:var(--primary-soft);padding:3px 8px;border-radius:999px;}
+  .row{display:grid;gap:12px;}
+  .b6{grid-template-columns:repeat(6,1fr);} .b5{grid-template-columns:repeat(5,1fr);}
+  .b4{grid-template-columns:repeat(4,1fr);} .b3{grid-template-columns:repeat(3,1fr);}
+  .sw{border-radius:5px;overflow:hidden;border:1px solid #e6e8ec;background:#fff;}
+  .sw .col{height:70px;}
+  .sw .meta{padding:10px 12px;}
+  .sw .role{font-size:13px;font-weight:600;}
+  .sw .hex{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px;}
+  .func{border:1px solid #e6e8ec;border-radius:5px;overflow:hidden;background:#fff;}
+  .func .head{padding:11px 13px;font-size:14px;font-weight:600;}
+  .func .bars{display:flex;}
+  .func .bars span{flex:1;height:46px;}
+  .func .labels{display:flex;font-size:10px;color:var(--muted);}
+  .func .labels span{flex:1;text-align:center;padding:6px 2px;font-variant-numeric:tabular-nums;}
+  /* canvas card */
+  .canvasbox{border-radius:12px;padding:28px;background:var(--canvas);display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+  .canvasbox .info{color:#fff;}
+  .canvasbox .info b{font-size:20px;font-weight:700;}
+  .canvasbox .info p{font-size:14px;color:rgba(255,255,255,.82);margin-top:4px;}
+  .canvasbox .stops{display:flex;gap:8px;margin-left:auto;}
+  .canvasbox .stops i{width:64px;border-radius:5px;height:48px;display:block;border:1px solid rgba(255,255,255,.3);}
+  .stoplbl{font-size:11px;color:rgba(255,255,255,.9);text-align:center;margin-top:4px;font-variant-numeric:tabular-nums;}
+  /* combo preview on canvas */
+  .combo{border-radius:12px;padding:26px;background:var(--canvas);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .card{background:#fff;border-radius:5px;padding:20px;}
+  .card h3{font-size:17px;font-weight:700;}
+  .card p{font-size:13px;color:var(--muted);margin-top:4px;}
+  .btn{border:none;border-radius:5px;padding:12px 18px;font-family:inherit;font-size:15px;font-weight:600;color:#fff;cursor:pointer;}
+  .row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;}
+  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:5px;padding:6px 11px;font-size:13px;font-weight:600;}
+  .ontext{color:#fff;font-size:14px;}
+  .ontext.dim{color:rgba(255,255,255,.82);}
+  pre{background:#0f1830;color:#cfe0ff;padding:20px;border-radius:8px;font-size:12.5px;line-height:1.7;overflow:auto;
+    font-family:ui-monospace,Menlo,monospace;}
+  pre .c{color:#7fa8ff;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>국풍국어학원-신갈관 키오스크 — 컬러 팔레트</h1>
+  <p class="sub">현재 적용 기준 · 블루 그라데이션 캔버스 + 블루 브랜드 + 코랄 accent · 카드 라운드 5px</p>
+
+  <!-- CANVAS -->
+  <h2>배경 캔버스 <span class="tag">은은한 블루 그라데이션</span></h2>
+  <div class="canvasbox">
+    <div class="info"><b>radial-gradient · 70% 12%</b><p>본문·탑바·바텀바 전체 배경 (탑/바텀은 투명으로 이어짐)</p></div>
+    <div class="stops">
+      <div><i style="background:#2f63d6"></i><div class="stoplbl">#2F63D6</div></div>
+      <div><i style="background:#2654c2"></i><div class="stoplbl">#2654C2</div></div>
+      <div><i style="background:#2046a6"></i><div class="stoplbl">#2046A6</div></div>
+    </div>
+  </div>
+
+  <!-- BRAND -->
+  <h2>브랜드 <span class="tag">Blue Primary / Coral Accent</span></h2>
+  <div class="row b5">
+    <div class="sw"><div class="col" style="background:#2563eb"></div><div class="meta"><div class="role">Primary</div><div class="hex">#2563EB · 주요 액션·아이콘</div></div></div>
+    <div class="sw"><div class="col" style="background:#1d4ed8"></div><div class="meta"><div class="role">Primary Hover</div><div class="hex">#1D4ED8</div></div></div>
+    <div class="sw"><div class="col" style="background:#1e40af"></div><div class="meta"><div class="role">Primary Text</div><div class="hex">#1E40AF · 강조 텍스트</div></div></div>
+    <div class="sw"><div class="col" style="background:#eaf2fe;border-bottom:1px solid #e6e8ec"></div><div class="meta"><div class="role">Primary Soft</div><div class="hex">#EAF2FE · 소프트 배경</div></div></div>
+    <div class="sw"><div class="col" style="background:#f76b15"></div><div class="meta"><div class="role">Accent</div><div class="hex">#F76B15 · 코랄 포인트</div></div></div>
+  </div>
+
+  <!-- NEUTRALS -->
+  <h2>중립 (카드/텍스트) <span class="tag">흰 카드 위 콘텐츠용</span></h2>
+  <div class="row b5">
+    <div class="sw"><div class="col" style="background:#ffffff;border-bottom:1px solid #e6e8ec"></div><div class="meta"><div class="role">표면/카드</div><div class="hex">#FFFFFF</div></div></div>
+    <div class="sw"><div class="col" style="background:#eef1f0"></div><div class="meta"><div class="role">소프트/hover</div><div class="hex">#EEF1F0</div></div></div>
+    <div class="sw"><div class="col" style="background:#d7dad9"></div><div class="meta"><div class="role">보더</div><div class="hex">#D7DAD9</div></div></div>
+    <div class="sw"><div class="col" style="background:#5f6563"></div><div class="meta"><div class="role">보조 텍스트</div><div class="hex">#5F6563</div></div></div>
+    <div class="sw"><div class="col" style="background:#1a211e"></div><div class="meta"><div class="role">본문 텍스트</div><div class="hex">#1A211E</div></div></div>
+  </div>
+
+  <!-- ON CANVAS TEXT -->
+  <h2>캔버스 위 글자 <span class="tag">블루 위 가독</span></h2>
+  <div class="canvasbox" style="gap:24px">
+    <div><span class="ontext" style="font-size:20px;font-weight:700">제목 / 본문 · #FFFFFF</span><div class="stoplbl" style="text-align:left;margin-top:6px">대비 약 8:1 (AA 통과)</div></div>
+    <div><span class="ontext dim">안내 보조문 · rgba(255,255,255,.85)</span></div>
+  </div>
+
+  <!-- FUNCTIONAL -->
+  <h2>기능색 4종 <span class="tag">의미 고정</span></h2>
+  <div class="row b4">
+    <div class="func"><div class="head" style="color:#047857">성공 · Success</div>
+      <div class="bars"><span style="background:#ecfdf5"></span><span style="background:#10b981"></span><span style="background:#047857"></span></div>
+      <div class="labels"><span>#ECFDF5</span><span>#10B981</span><span>#047857</span></div></div>
+    <div class="func"><div class="head" style="color:#b45309">경고 · Warning</div>
+      <div class="bars"><span style="background:#fffbeb"></span><span style="background:#f59e0b"></span><span style="background:#b45309"></span></div>
+      <div class="labels"><span>#FFFBEB</span><span>#F59E0B</span><span>#B45309</span></div></div>
+    <div class="func"><div class="head" style="color:#b91c1c">위험 · Danger</div>
+      <div class="bars"><span style="background:#fef2f2"></span><span style="background:#ef4444"></span><span style="background:#b91c1c"></span></div>
+      <div class="labels"><span>#FEF2F2</span><span>#EF4444</span><span>#B91C1C</span></div></div>
+    <div class="func"><div class="head" style="color:#0d74ce">정보 · Info</div>
+      <div class="bars"><span style="background:#e6f4fe"></span><span style="background:#0090ff"></span><span style="background:#0d74ce"></span></div>
+      <div class="labels"><span>#E6F4FE</span><span>#0090FF</span><span>#0D74CE</span></div></div>
+  </div>
+
+  <!-- COMBO -->
+  <h2>조합 미리보기 <span class="tag">캔버스 + 카드 + 포인트</span></h2>
+  <div class="combo">
+    <div class="card">
+      <h3>등원 체크인</h3><p>QR 스캔 또는 PIN 입력</p>
+      <div class="row2">
+        <button class="btn" style="background:#2563eb">블루 액션</button>
+        <button class="btn" style="background:#f76b15">코랄 강조</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>상태 배지</h3><p>좌석·출결 상태</p>
+      <div class="row2">
+        <span class="chip" style="background:#eaf2fe;color:#1e40af">빈자리</span>
+        <span class="chip" style="background:#ecfdf5;color:#047857">출석</span>
+        <span class="chip" style="background:#fffbeb;color:#b45309">지각</span>
+        <span class="chip" style="background:#fef2f2;color:#b91c1c">결석</span>
+        <span class="chip" style="background:#fff1e6;color:#cc4e00">내 자리</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOKENS -->
+  <h2>토큰 (kiosk.html 기준)</h2>
+  <pre><span class="c">/* 캔버스 (배경) */</span>
+--canvas: radial-gradient(140% 120% at 70% 12%, #2f63d6, #2654c2 55%, #2046a6);
+
+<span class="c">/* 브랜드 */</span>
+--primary:#2563eb; --primary-hover:#1d4ed8; --primary-active:#1e40af; --primary-soft:#eaf2fe;
+--accent:#f76b15;  --accent-soft:#fff1e6;   --accent-fg:#cc4e00;
+
+<span class="c">/* 중립 (카드/텍스트) */</span>
+--surface:#fff; --soft:#eef1f0; --line:#d7dad9; --muted-fg:#5f6563; --ink:#1a211e;
+캔버스 위 글자: #fff / rgba(255,255,255,.85)
+
+<span class="c">/* 기능색 */</span>
+--success:#10b981/#ecfdf5/#047857   --warning:#f59e0b/#fffbeb/#b45309
+--danger:#ef4444/#fef2f2/#b91c1c    --info:#0090ff/#e6f4fe/#0d74ce
+
+<span class="c">/* 포커스링 / 라운드 */</span>
+--ring:rgba(37,99,235,.4);   radius: 5px (전 카드 통일)</pre>
+</div>
+</body>
+</html>

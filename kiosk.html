@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800, initial-scale=1.0">
+<title>국풍국어학원-신갈관 키오스크</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{
+  --primary:#2563eb; --primary-hover:#1d4ed8; --primary-active:#1e40af; --primary-soft:#eaf2fe;
+  --accent:#ef4444; --accent-soft:#fef2f2; --accent-fg:#b91c1c;
+  --background:#f7f9f8; --surface:#fff; --soft:#eef1f0;
+  --line:#d7dad9; --muted-fg:#5f6563; --ink:#1a211e;
+  --success:#10b981; --success-bg:#ecfdf5; --success-fg:#047857;
+  --danger:#ef4444; --danger-bg:#fef2f2; --danger-soft:#fee2e2;
+  --ring:rgba(37,99,235,.4);
+  --r-sm:5px; --r-md:5px; --r-lg:5px; --r-xl:5px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',sans-serif;background:#c2c9c7;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.screen{width:800px;height:1280px;overflow:hidden;position:relative;
+  background:radial-gradient(140% 120% at 70% 12%, #2f63d6 0%, #2654c2 55%, #2046a6 100%);
+  border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.lucide{stroke-width:2;}
+
+/* views */
+.view{position:absolute;inset:0;display:none;flex-direction:column;}
+.view.on{display:flex;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.view.on{animation:none}}
+
+/* topbar */
+.topbar{height:90px;flex-shrink:0;display:flex;align-items:center;padding:0 50px;background:transparent;
+  border-bottom:1px solid rgba(255,255,255,.1);}
+.logo{width:46px;height:46px;border-radius:13px;background:#fff;color:var(--primary);
+  display:flex;align-items:center;justify-content:center;margin-right:13px;}
+.brand{font-size:25px;font-weight:700;letter-spacing:-0.01em;color:#fff;white-space:nowrap;}
+.spacer{flex:1;}
+.clock{text-align:right;font-size:13px;color:rgba(255,255,255,.82);margin-right:14px;}
+.clock b{display:block;font-size:18px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;}
+.pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.2);
+  color:#fff;font-size:14px;font-weight:600;padding:9px 14px;border-radius:999px;}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:#fff;}
+.stuchip{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 14px 6px 6px;}
+.stuchip .ava{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--primary);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+.stuchip .nm{font-size:15px;font-weight:600;color:#fff;}
+.stuchip .nm small{display:block;font-size:12px;font-weight:500;color:rgba(255,255,255,.82);}
+
+.back{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:#fff;
+  border-radius:var(--r-md);padding:11px 16px;font:inherit;font-size:15px;font-weight:600;color:var(--ink);
+  cursor:pointer;margin-right:16px;}
+.head2{display:flex;align-items:center;}
+.title{font-size:23px;font-weight:700;letter-spacing:-0.01em;}
+
+.btn{border:none;border-radius:var(--r-md);font:inherit;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:.15s;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-primary:disabled{background:var(--soft);color:#a8aeac;cursor:not-allowed;}
+.btn-block{width:100%;padding:20px;font-size:20px;}
+
+/* ============ HOME ============ */
+#home .body{flex:1;display:flex;flex-direction:column;padding:30px 50px 0;min-height:0;}
+.greet{margin-bottom:22px;}
+.greet h1{font-size:31px;font-weight:700;letter-spacing:-0.02em;}
+.greet p{font-size:22px;font-weight:600;color:var(--muted-fg);line-height:1.35;}
+.acts{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0;}
+.grp{display:grid;gap:16px;}
+.grp.two{grid-template-columns:1fr 1fr;flex:1;}
+.grp.three{grid-template-columns:repeat(3,1fr);flex:0.85;}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);
+  padding:28px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;
+  justify-content:center;position:relative;}
+.tile:hover{border-color:var(--primary);box-shadow:0 8px 24px rgba(37,99,235,.14);transform:translateY(-2px);}
+.tile .ic{width:62px;height:62px;border-radius:17px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.tile h2{font-size:26px;font-weight:700;letter-spacing:-0.01em;}
+.tile p{font-size:15px;color:var(--muted-fg);margin-top:6px;line-height:1.4;}
+.tile .arrow{position:absolute;right:24px;bottom:24px;}
+.tile.in .ic{background:#0090FF;color:#fff;}
+.tile.in{border-color:var(--primary-soft);}
+.tile.out .ic{background:var(--soft);color:var(--ink);}
+.scard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:22px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;justify-content:center;gap:12px;}
+.scard:hover{border-color:var(--primary);background:var(--primary-soft);transform:translateY(-2px);}
+.scard .ic{width:50px;height:50px;border-radius:13px;background:var(--soft);color:var(--primary-active);
+  display:flex;align-items:center;justify-content:center;}
+.scard b{font-size:19px;font-weight:700;}
+.scard span{display:block;font-size:13px;color:var(--muted-fg);margin-top:3px;}
+.seat-banner{flex:0.5;background:linear-gradient(100deg,#fff 55%,var(--accent-soft));
+  border:1px solid #fecaca;border-radius:var(--r-xl);padding:20px 28px;cursor:pointer;
+  display:flex;align-items:center;gap:22px;transition:.15s;}
+
+/* 학원소식 카드 */
+.news-card{flex:0.7;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:18px 24px;display:flex;flex-direction:column;min-height:0;}
+.news-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.news-head .nic{width:36px;height:36px;border-radius:5px;background:var(--primary-soft);color:var(--primary-active);
+  display:flex;align-items:center;justify-content:center;}
+.news-head h2{font-size:19px;font-weight:700;}
+.news-head .more{margin-left:auto;font-size:13px;color:var(--muted-fg);display:flex;align-items:center;gap:4px;}
+.news-list{display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center;}
+.news-item{display:flex;align-items:center;gap:12px;}
+.news-item .tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;flex-shrink:0;}
+.news-item .tag.win{background:var(--accent-soft);color:var(--accent-fg);}
+.news-item .tag.new{background:var(--primary-soft);color:var(--primary-active);}
+.news-item .nt{flex:1;font-size:16px;font-weight:500;color:var(--ink);}
+.news-item .nd{font-size:13px;color:var(--muted-fg);font-variant-numeric:tabular-nums;}
+.seat-banner:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(239,68,68,.15);}
+.seat-banner .ic{width:62px;height:62px;border-radius:17px;background:#EF4444;color:#fff;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.seat-banner .txt{flex:1;}
+.seat-banner h2{font-size:24px;font-weight:700;}
+.seat-stat{display:flex;gap:10px;margin-top:10px;}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:8px;padding:5px 11px;font-size:13px;font-weight:600;
+  background:var(--primary-soft);color:var(--primary-active);}
+.notice{flex-shrink:0;height:174px;display:flex;flex-direction:column;justify-content:center;gap:16px;
+  background:transparent;border-top:1px solid rgba(255,255,255,.1);padding:0 50px;}
+.notice .nrow{display:flex;align-items:center;gap:12px;}
+.notice .lbl{flex-shrink:0;background:#fff;color:#1d4ed8;font-size:13px;font-weight:700;padding:5px 12px;border-radius:6px;}
+.notice .lbl.alt{background:var(--accent);color:#fff;}
+.notice p{font-size:17px;color:rgba(255,255,255,.92);}
+
+/* ============ CHECKIN ============ */
+#checkin .body{flex:1;display:flex;flex-direction:column;padding:28px 50px;min-height:0;}
+#checkin .lead{font-size:16px;color:var(--muted-fg);margin:14px 0 22px;}
+.qrwrap{display:flex;flex-direction:column;align-items:center;}
+.scan{position:relative;width:300px;height:300px;border-radius:22px;
+  background:radial-gradient(circle at 50% 40%,#1a2c54,#0c1430);display:flex;align-items:center;justify-content:center;color:#9db8f0;}
+.scan .frame i{position:absolute;width:40px;height:40px;border:4px solid var(--primary);}
+.scan .frame i{ }
+.c-tl{top:34px;left:34px;border-right:none!important;border-bottom:none!important;border-radius:14px 0 0 0;}
+.c-tr{top:34px;right:34px;border-left:none!important;border-bottom:none!important;border-radius:0 14px 0 0;}
+.c-bl{bottom:34px;left:34px;border-right:none!important;border-top:none!important;border-radius:0 0 0 14px;}
+.c-br{bottom:34px;right:34px;border-left:none!important;border-top:none!important;border-radius:0 0 14px 0;}
+.scan .laser{position:absolute;left:34px;right:34px;top:50%;height:3px;background:var(--primary);
+  box-shadow:0 0 12px 2px var(--primary);animation:scan 2.2s ease-in-out infinite;}
+@keyframes scan{0%,100%{top:36%}50%{top:64%}}
+@media (prefers-reduced-motion:reduce){.scan .laser{animation:none}}
+.qrsim{margin-top:18px;background:#fff;border:1.5px solid var(--primary);color:var(--primary-active);
+  border-radius:var(--r-md);padding:13px 22px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;}
+.qrsim:hover{background:var(--primary-soft);}
+.qrhint{margin-top:14px;font-size:15px;color:var(--muted-fg);text-align:center;}
+
+.ordiv{display:flex;align-items:center;gap:16px;margin:26px 0;}
+.ordiv .l{flex:1;height:1px;background:var(--line);}
+.ordiv b{font-size:14px;color:var(--muted-fg);font-weight:600;}
+
+.pinwrap{display:flex;flex-direction:column;align-items:center;}
+.pinlabel{font-size:15px;color:var(--muted-fg);margin-bottom:14px;}
+.pinview{display:flex;gap:18px;margin-bottom:24px;}
+.pinview i{width:20px;height:20px;border-radius:50%;background:var(--line);transition:.15s;}
+.pinview i.on{background:var(--primary);}
+.pinview.err i{background:var(--danger);animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.numpad{display:grid;grid-template-columns:repeat(3,108px);gap:14px;}
+.key{height:84px;border:1.5px solid var(--line);background:#fff;border-radius:var(--r-md);
+  font:inherit;font-size:30px;font-weight:600;color:var(--ink);cursor:pointer;transition:.12s;
+  display:flex;align-items:center;justify-content:center;}
+.key:hover{background:var(--primary-soft);border-color:var(--primary);}
+.key:active{transform:scale(.95);}
+.key.del{color:var(--muted-fg);}
+.key.ok{background:var(--primary);color:#fff;border-color:var(--primary);}
+.key.ok:hover{background:var(--primary-hover);}
+
+/* ============ SEAT ============ */
+#seat .body{flex:1;display:flex;flex-direction:column;padding:22px 50px 26px;min-height:0;}
+.tabs{display:flex;gap:6px;background:var(--soft);padding:5px;border-radius:var(--r-md);margin:16px 0;width:fit-content;}
+.tab{padding:12px 24px;border-radius:var(--r-sm);font-size:16px;font-weight:600;cursor:pointer;color:var(--muted-fg);
+  display:flex;align-items:center;gap:8px;}
+.tab.on{background:#fff;color:var(--primary-active);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.tab small{font-size:12px;font-weight:500;opacity:.8;}
+.room{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);
+  padding:22px;display:flex;flex-direction:column;min-height:0;}
+.front{text-align:center;font-size:13px;font-weight:600;color:var(--muted-fg);letter-spacing:.1em;
+  background:var(--soft);border-radius:8px;padding:10px;margin-bottom:18px;}
+.grid{display:grid;gap:14px;flex:1;min-height:0;}
+.seat{border-radius:var(--r-md);border:1.5px solid transparent;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;font-size:19px;font-weight:700;cursor:pointer;transition:.12s;}
+.seat small{font-size:11px;font-weight:500;}
+.seat.free{background:#fff;color:var(--ink);border-color:var(--line);}
+.seat.free:hover{border-color:var(--primary);background:var(--primary-soft);}
+.seat.used{background:var(--primary-soft);color:var(--ink);border-color:#c2d4f7;cursor:default;}
+.seat.mine{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 14px rgba(37,99,235,.35);}
+.seat.block{background:var(--soft);color:var(--ink);cursor:default;}
+.legend{display:flex;gap:18px;justify-content:center;margin-top:16px;font-size:13px;color:var(--muted-fg);}
+.legend span{display:flex;align-items:center;gap:7px;}
+.legend i{width:15px;height:15px;border-radius:5px;display:inline-block;}
+
+.panel{flex-shrink:0;margin-top:16px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-lg);padding:18px 20px;display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center;}
+.panel .sel{display:flex;align-items:center;gap:14px;}
+.panel .sel .s{width:58px;height:58px;border-radius:14px;background:var(--primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;}
+.panel .sel .s.empty{background:var(--soft);color:#a8aeac;font-size:14px;}
+.panel .sel b{font-size:18px;font-weight:700;}
+.panel .sel span{display:block;font-size:13px;color:var(--muted-fg);margin-top:2px;}
+.times{display:flex;gap:8px;margin-bottom:12px;}
+.time{flex:1;border:1.5px solid var(--line);border-radius:var(--r-md);padding:11px 6px;font-size:14px;
+  font-weight:600;cursor:pointer;text-align:center;color:var(--ink);transition:.12s;}
+.time.on{border-color:var(--primary);background:var(--primary-soft);color:var(--primary-active);}
+.time small{display:block;font-size:11px;font-weight:500;color:var(--muted-fg);margin-top:2px;}
+.time.on small{color:var(--primary-active);}
+
+/* ============ RESULT ============ */
+#result .inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px;gap:10px;}
+.rbig{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;animation:pop .4s cubic-bezier(.22,1,.36,1);}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.rbig.s{background:var(--success-bg);color:var(--success);}
+.rbig.m{background:var(--primary-soft);color:var(--primary);}
+.rbig.a{background:var(--accent-soft);color:var(--accent);}
+#result h1{font-size:36px;font-weight:800;letter-spacing:-0.02em;}
+#result .rsub{font-size:19px;color:var(--muted-fg);}
+.kakao{margin-top:26px;width:420px;background:#fff;border:1px solid var(--line);border-radius:18px;
+  padding:18px;text-align:left;box-shadow:0 6px 20px rgba(0,0,0,.06);}
+.kakao .kh{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted-fg);margin-bottom:10px;font-weight:600;}
+.kakao .kdot{width:18px;height:18px;border-radius:6px;background:#FEE500;display:flex;align-items:center;justify-content:center;}
+.kbubble{background:#FEE500;border-radius:4px 14px 14px 14px;padding:14px 16px;font-size:15px;line-height:1.5;color:#3c1e1e;}
+.countdown{margin-top:28px;font-size:15px;color:var(--muted-fg);}
+.countdown b{color:var(--primary-active);font-variant-numeric:tabular-nums;}
+#result .home-btn{margin-top:16px;}
+
+/* ============ APPLY SCREENS (수강/교재/면담) ============ */
+#course .body,#book .body,#consult .body{flex:1;display:flex;flex-direction:column;padding:24px 50px 26px;min-height:0;}
+.sublead{font-size:16px;color:var(--muted-fg);margin:12px 0 16px;}
+.cscroll{flex:1;overflow-y:auto;min-height:0;}
+.section-label{font-size:14px;font-weight:600;color:var(--muted-fg);margin:0 0 10px;}
+.section-label.mt{margin-top:22px;}
+
+/* course list */
+.list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;min-height:0;}
+.litem{display:flex;align-items:center;gap:16px;background:#fff;border:1.5px solid var(--line);
+  border-radius:var(--r-lg);padding:18px 20px;cursor:pointer;transition:.12s;}
+.litem:hover{border-color:var(--primary);}
+.litem.on{border-color:var(--primary);background:var(--primary-soft);}
+.litem.full{opacity:.5;cursor:not-allowed;}
+.litem .ci{width:48px;height:48px;border-radius:12px;background:var(--primary-soft);color:var(--primary-active);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.litem .info{flex:1;}
+.litem .info b{font-size:18px;font-weight:700;}
+.litem .info p{font-size:14px;color:var(--muted-fg);margin-top:3px;}
+.litem .right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.tagb{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--soft);color:var(--muted-fg);}
+.tagb.ok{background:var(--primary-soft);color:var(--primary-active);}
+.tagb.full{background:var(--danger-bg);color:var(--danger-fg);}
+.radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);}
+.litem.on .radio{border-color:var(--primary);background:var(--primary);box-shadow:inset 0 0 0 4px #fff;}
+
+/* book grid */
+.bookgrid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-content:start;min-height:0;}
+.bookcard{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:.12s;position:relative;}
+.bookcard:hover{border-color:var(--primary);}
+.bookcard.on{border-color:var(--primary);box-shadow:0 0 0 3px var(--ring);}
+.bookcard .cover{height:130px;display:flex;align-items:center;justify-content:center;color:#fff;}
+.bookcard .bmeta{padding:12px 14px;}
+.bookcard .bmeta b{font-size:15px;font-weight:700;display:block;}
+.bookcard .bmeta span{font-size:12px;color:var(--muted-fg);}
+.bookcard .price{font-size:15px;font-weight:700;color:var(--ink);margin-top:6px;display:block;}
+.bookcard .chk{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;
+  background:#fff;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff;}
+.bookcard.on .chk{background:var(--primary);border-color:var(--primary);}
+
+/* consult */
+.chips{display:flex;gap:10px;flex-wrap:wrap;}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:12px 18px;font-size:15px;font-weight:600;cursor:pointer;color:var(--ink);}
+.chip.on{border-color:var(--primary);background:var(--primary-soft);color:var(--primary-active);}
+.dates{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+.date{border:1.5px solid var(--line);background:#fff;border-radius:var(--r-md);padding:14px 4px;text-align:center;cursor:pointer;}
+.date.on{border-color:var(--primary);background:var(--primary-soft);}
+.date b{font-size:20px;font-weight:700;display:block;}
+.date small{font-size:12px;color:var(--muted-fg);}
+.date.on small{color:var(--primary-active);}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.slot{border:1.5px solid var(--line);background:#fff;border-radius:var(--r-md);padding:16px 4px;text-align:center;font-size:17px;font-weight:600;cursor:pointer;color:var(--ink);}
+.slot.on{border-color:var(--primary);background:var(--primary);color:#fff;}
+.slot.dis{opacity:.4;cursor:not-allowed;background:var(--soft);}
+
+/* bottom confirm bar */
+.cbar{flex-shrink:0;margin-top:16px;display:flex;align-items:center;gap:16px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-lg);padding:16px 20px;}
+.cbar .sum{flex:1;}
+.cbar .sum b{font-size:17px;font-weight:700;}
+.cbar .sum span{display:block;font-size:13px;color:var(--muted-fg);margin-top:2px;}
+.cbar .btn{padding:16px 30px;font-size:17px;white-space:nowrap;}
+
+/* ============ ON-BODY TEXT (dark teal bg) ============ */
+.greet h1{color:#fff;}
+.greet p{color:rgba(255,255,255,.85);}
+.title{color:#fff;}
+.sublead{color:rgba(255,255,255,.85);}
+.section-label{color:rgba(255,255,255,.82);}
+#checkin .lead{color:rgba(255,255,255,.85);}
+.ordiv b{color:rgba(255,255,255,.85);}
+.ordiv .l{background:rgba(255,255,255,.22);}
+.pinlabel{color:rgba(255,255,255,.85);}
+.qrhint{color:rgba(255,255,255,.85);}
+#result h1{color:#fff;}
+#result .rsub{color:rgba(255,255,255,.85);}
+.countdown{color:rgba(255,255,255,.85);}
+.countdown b{color:#fff;}
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- ============ HOME ============ -->
+  <section class="view on" id="home">
+    <div class="topbar">
+      <div class="logo"><i data-lucide="graduation-cap" class="lucide" style="width:26px;height:26px"></i></div>
+      <div class="brand">국풍국어학원-신갈관</div>
+      <div class="spacer"></div>
+      <div class="clock"><span id="date">2026년 6월 21일 (일)</span><b id="time">오후 4:20</b></div>
+      <div class="pill"><span class="dot"></span>현재 원내 23명</div>
+    </div>
+    <div class="body">
+      <div class="greet">
+        <p>화면의 버튼을 눌러 진행하세요. 등·하원은 QR 또는 PIN으로 체크인됩니다.</p>
+      </div>
+      <div class="acts">
+        <div class="grp two">
+          <div class="tile in" onclick="openCheckin('in')">
+            <div><div class="ic"><i data-lucide="log-in" class="lucide" style="width:30px;height:30px"></i></div>
+              <h2>등원 체크인</h2><p>QR 스캔 또는 PIN 입력<br>학부모 알림 발송</p></div>
+            <i data-lucide="arrow-right" class="lucide arrow" style="width:28px;height:28px;color:var(--primary)"></i>
+          </div>
+          <div class="tile out" onclick="openCheckin('out')">
+            <div><div class="ic"><i data-lucide="log-out" class="lucide" style="width:30px;height:30px"></i></div>
+              <h2>하원 체크아웃</h2><p>좌석 자동 반납<br>오늘 자습시간 알림</p></div>
+            <i data-lucide="arrow-right" class="lucide arrow" style="width:28px;height:28px;color:var(--muted-fg)"></i>
+          </div>
+        </div>
+        <div class="grp three">
+          <div class="scard" onclick="openCourse()">
+            <div class="ic"><i data-lucide="book-open" class="lucide" style="width:26px;height:26px"></i></div>
+            <div><b>수강신청</b><span>강좌 신청·변경</span></div></div>
+          <div class="scard" onclick="openBook()">
+            <div class="ic"><i data-lucide="notebook-pen" class="lucide" style="width:26px;height:26px"></i></div>
+            <div><b>교재신청</b><span>교재 주문·수령</span></div></div>
+          <div class="scard" onclick="openConsult()">
+            <div class="ic"><i data-lucide="messages-square" class="lucide" style="width:26px;height:26px"></i></div>
+            <div><b>면담신청</b><span>선생님 상담 예약</span></div></div>
+        </div>
+        <div class="seat-banner" onclick="openSeat()">
+          <div class="ic"><i data-lucide="armchair" class="lucide" style="width:30px;height:30px"></i></div>
+          <div class="txt"><h2>자습실 자리 예약</h2>
+            <div class="seat-stat">
+              <span class="badge"><i data-lucide="check" style="width:14px;height:14px"></i>1자습실 <span id="rem1">8</span>석 남음</span>
+              <span class="badge"><i data-lucide="check" style="width:14px;height:14px"></i>2자습실 <span id="rem2">11</span>석 남음</span>
+            </div></div>
+          <i data-lucide="arrow-right" class="lucide" style="width:30px;height:30px;color:var(--accent)"></i>
+        </div>
+        <div class="news-card">
+          <div class="news-head">
+            <div class="nic"><i data-lucide="megaphone" style="width:20px;height:20px"></i></div>
+            <h2>학원소식</h2>
+            <span class="more">더보기 <i data-lucide="chevron-right" style="width:14px;height:14px"></i></span>
+          </div>
+          <div class="news-list">
+            <div class="news-item"><span class="tag win">합격</span><span class="nt">2026 수능 국어 1등급 32명 배출!</span><span class="nd">6/15</span></div>
+            <div class="news-item"><span class="tag new">신규</span><span class="nt">[고2 문법 마스터] 강좌 신규 개설</span><span class="nd">6/18</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notice">
+      <div class="nrow"><span class="lbl">공지</span><p>7월 전국연합 모의고사 신청 ~6/30까지 · 데스크에서 접수해 주세요.</p></div>
+      <div class="nrow"><span class="lbl alt">일정</span><p>여름 특강 시간표가 업데이트되었습니다 · 자세한 내용은 게시판을 확인하세요.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ CHECKIN ============ -->
+  <section class="view" id="checkin">
+    <div class="topbar">
+      <div class="logo"><i data-lucide="graduation-cap" class="lucide" style="width:26px;height:26px"></i></div>
+      <div class="brand">국풍국어학원-신갈관</div>
+      <div class="spacer"></div>
+      <div class="clock"><span>2026년 6월 21일 (일)</span><b>오후 4:20</b></div>
+    </div>
+    <div class="body">
+      <div class="head2">
+        <button class="back" onclick="go('home')"><i data-lucide="chevron-left" style="width:20px;height:20px"></i>처음으로</button>
+        <span class="title" id="ci-title">등원 체크인</span>
+      </div>
+      <p class="lead" id="ci-lead">QR 코드를 비추거나 PIN 번호를 입력해 체크인하세요. 체크인 즉시 학부모님께 알림이 발송됩니다.</p>
+
+      <div class="qrwrap">
+        <div class="scan">
+          <div class="frame"><i class="c-tl"></i><i class="c-tr"></i><i class="c-bl"></i><i class="c-br"></i></div>
+          <div class="laser"></div>
+          <i data-lucide="scan-line" style="width:64px;height:64px;opacity:.4"></i>
+        </div>
+        <div class="qrhint">학생 앱의 QR을 화면 안에 맞춰주세요</div>
+        <button class="qrsim" onclick="simQR()"><i data-lucide="qr-code" style="width:18px;height:18px;vertical-align:-3px"></i> QR 인식 시뮬레이션 (데모)</button>
+      </div>
+
+      <div class="ordiv"><div class="l"></div><b>또는 PIN으로 체크인</b><div class="l"></div></div>
+
+      <div class="pinwrap">
+        <div class="pinlabel">개인 4자리 PIN 번호를 입력하세요 <span style="color:#b9d0ff">(데모: 1234 / 2468 / 1357)</span></div>
+        <div class="pinview" id="pinview"><i></i><i></i><i></i><i></i></div>
+        <div class="numpad">
+          <button class="key" onclick="pinPush('1')">1</button>
+          <button class="key" onclick="pinPush('2')">2</button>
+          <button class="key" onclick="pinPush('3')">3</button>
+          <button class="key" onclick="pinPush('4')">4</button>
+          <button class="key" onclick="pinPush('5')">5</button>
+          <button class="key" onclick="pinPush('6')">6</button>
+          <button class="key" onclick="pinPush('7')">7</button>
+          <button class="key" onclick="pinPush('8')">8</button>
+          <button class="key" onclick="pinPush('9')">9</button>
+          <button class="key del" onclick="pinDel()"><i data-lucide="delete" style="width:26px;height:26px"></i></button>
+          <button class="key" onclick="pinPush('0')">0</button>
+          <button class="key ok" onclick="pinSubmit()"><i data-lucide="check" style="width:30px;height:30px"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SEAT ============ -->
+  <section class="view" id="seat">
+    <div class="topbar">
+      <div class="logo"><i data-lucide="graduation-cap" class="lucide" style="width:26px;height:26px"></i></div>
+      <div class="brand">국풍국어학원-신갈관</div>
+      <div class="spacer"></div>
+      <div class="stuchip"><div class="ava" id="seat-ava">서</div><div class="nm" id="seat-nm">이서연<small>고2 · 정규반</small></div></div>
+    </div>
+    <div class="body">
+      <div class="head2">
+        <button class="back" onclick="go('home')"><i data-lucide="chevron-left" style="width:20px;height:20px"></i>처음으로</button>
+        <span class="title">자습실 자리 예약</span>
+      </div>
+      <div class="tabs" id="tabs">
+        <div class="tab on" onclick="switchRoom('1')"><i data-lucide="armchair" style="width:18px;height:18px"></i>1자습실 <small id="tab1">8/20 남음</small></div>
+        <div class="tab" onclick="switchRoom('2')"><i data-lucide="armchair" style="width:18px;height:18px"></i>2자습실 <small id="tab2">11/16 남음</small></div>
+      </div>
+      <div class="room">
+        <div class="front">━━  입 구 · 관 리 석  ━━</div>
+        <div class="grid" id="grid"></div>
+        <div class="legend">
+          <span><i style="background:#fff;border:1.5px solid var(--line)"></i>빈자리</span>
+          <span><i style="background:var(--primary-soft);border:1.5px solid #c2d4f7"></i>사용중</span>
+          <span><i style="background:var(--primary)"></i>내 선택</span>
+          <span><i style="background:var(--soft)"></i>점검중</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="sel">
+          <div class="s empty" id="sel-num">미선택</div>
+          <div><b id="sel-title">자리를 선택하세요</b><span id="sel-sub">빈자리를 터치하면 선택됩니다</span></div>
+        </div>
+        <div>
+          <div class="times" id="times">
+            <div class="time" onclick="selTime(0)"><span>2시간</span><small>~18:20</small></div>
+            <div class="time on" onclick="selTime(1)"><span>22시까지</span><small>마감</small></div>
+            <div class="time" onclick="selTime(2)"><span>직접</span><small>지정</small></div>
+          </div>
+          <button class="btn btn-primary btn-block" id="confirm" disabled onclick="confirmSeat()">자리를 선택하세요</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="view" id="result">
+    <div class="topbar">
+      <div class="logo"><i data-lucide="graduation-cap" class="lucide" style="width:26px;height:26px"></i></div>
+      <div class="brand">국풍국어학원-신갈관</div>
+    </div>
+    <div class="inner">
+      <div class="rbig s" id="r-icon"><i data-lucide="check" class="lucide" style="width:64px;height:64px"></i></div>
+      <h1 id="r-title">등원 완료!</h1>
+      <p class="rsub" id="r-sub"></p>
+      <div class="kakao" id="r-kakao">
+        <div class="kh"><span class="kdot"><i data-lucide="message-circle" style="width:12px;height:12px;stroke:#3c1e1e"></i></span>학부모님께 알림톡 발송</div>
+        <div class="kbubble" id="r-msg"></div>
+      </div>
+      <div class="countdown"><b id="cd">5</b>초 후 처음 화면으로 돌아갑니다</div>
+      <button class="btn btn-primary home-btn" style="padding:14px 28px;font-size:16px" onclick="go('home')">처음으로</button>
+    </div>
+  </section>
+
+  <!-- ============ 수강신청 ============ -->
+  <section class="view" id="course">
+    <div class="topbar">
+      <div class="logo"><i data-lucide="graduation-cap" class="lucide" style="width:26px;height:26px"></i></div>
+      <div class="brand">국풍국어학원-신갈관</div>
+      <div class="spacer"></div>
+      <div class="clock"><span>2026년 6월 21일 (일)</span><b>오후 4:20</b></div>
+    </div>
+    <div class="body">
+      <div class="head2">
+        <button class="back" onclick="go('home')"><i data-lucide="chevron-left" style="width:20px;height:20px"></i>처음으로</button>
+        <span class="title">수강신청 · 고등부 국어</span>
+      </div>
+      <p class="sublead">신청할 강좌를 선택하세요. 데스크 확인 후 확정·결제 안내가 진행됩니다.</p>
+      <div class="list" id="course-list"></div>
+      <div class="cbar">
+        <div class="sum" id="course-sum"><b>강좌를 선택하세요</b><span>고등부 국어 5개 강좌</span></div>
+        <button class="btn btn-primary" id="course-btn" disabled onclick="confirmCourse()">신청하기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 교재신청 ============ -->
+  <section class="view" id="book">
+    <div class="topbar">
+      <div class="logo"><i data-lucide="graduation-cap" class="lucide" style="width:26px;height:26px"></i></div>
+      <div class="brand">국풍국어학원-신갈관</div>
+      <div class="spacer"></div>
+      <div class="clock"><span>2026년 6월 21일 (일)</span><b>오후 4:20</b></div>
+    </div>
+    <div class="body">
+      <div class="head2">
+        <button class="back" onclick="go('home')"><i data-lucide="chevron-left" style="width:20px;height:20px"></i>처음으로</button>
+        <span class="title">교재신청 · 고등부 국어</span>
+      </div>
+      <p class="sublead">필요한 교재를 선택하세요. 복수 선택할 수 있어요.</p>
+      <div class="bookgrid" id="book-grid"></div>
+      <div class="cbar">
+        <div class="sum" id="book-sum"><b>교재를 선택하세요</b><span>복수 선택 가능</span></div>
+        <button class="btn btn-primary" id="book-btn" disabled onclick="confirmBook()">신청하기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 면담신청 ============ -->
+  <section class="view" id="consult">
+    <div class="topbar">
+      <div class="logo"><i data-lucide="graduation-cap" class="lucide" style="width:26px;height:26px"></i></div>
+      <div class="brand">국풍국어학원-신갈관</div>
+      <div class="spacer"></div>
+      <div class="clock"><span>2026년 6월 21일 (일)</span><b>오후 4:20</b></div>
+    </div>
+    <div class="body">
+      <div class="head2">
+        <button class="back" onclick="go('home')"><i data-lucide="chevron-left" style="width:20px;height:20px"></i>처음으로</button>
+        <span class="title">면담신청</span>
+      </div>
+      <p class="sublead">선생님과 날짜·시간을 선택해 면담을 예약하세요.</p>
+      <div class="cscroll">
+        <div class="section-label">선생님 선택</div>
+        <div class="chips" id="consult-teachers"></div>
+        <div class="section-label mt">날짜 선택</div>
+        <div class="dates" id="consult-dates"></div>
+        <div class="section-label mt">시간 선택</div>
+        <div class="slots" id="consult-slots"></div>
+      </div>
+      <div class="cbar">
+        <div class="sum" id="consult-sum"><b>날짜·시간을 선택하세요</b><span>면담 예약</span></div>
+        <button class="btn btn-primary" id="consult-btn" disabled onclick="confirmConsult()">예약하기</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+lucide.createIcons();
+
+const STUDENTS = {
+  '1234': {name:'이서연', grade:'고2 · 정규반', short:'서'},
+  '2468': {name:'김민준', grade:'중3 · 심화반', short:'민'},
+  '1357': {name:'박지후', grade:'고1 · 정규반', short:'지'},
+};
+
+let timers = [];
+function clearTimers(){ timers.forEach(t=>clearTimeout(t)||clearInterval(t)); timers=[]; }
+
+function go(id){
+  clearTimers();
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  lucide.createIcons();
+}
+
+/* ---------- CHECKIN ---------- */
+let mode='in', pin='', curStudent=null;
+function openCheckin(m){
+  mode=m; pin=''; renderPin();
+  document.getElementById('ci-title').textContent = m==='in'?'등원 체크인':'하원 체크아웃';
+  document.getElementById('ci-lead').textContent = m==='in'
+    ? 'QR 코드를 비추거나 PIN 번호를 입력해 체크인하세요. 체크인 즉시 학부모님께 알림이 발송됩니다.'
+    : '하원 체크아웃을 진행합니다. 좌석은 자동 반납되고, 오늘 자습 시간이 학부모님께 전송됩니다.';
+  go('checkin');
+}
+function renderPin(){
+  const pv=document.getElementById('pinview'); pv.classList.remove('err');
+  [...pv.children].forEach((d,i)=>d.classList.toggle('on', i<pin.length));
+}
+function pinPush(n){ if(pin.length<4){ pin+=n; renderPin(); if(pin.length===4) timers.push(setTimeout(pinSubmit,250)); } }
+function pinDel(){ pin=pin.slice(0,-1); renderPin(); }
+function pinSubmit(){
+  const s=STUDENTS[pin];
+  if(s){ curStudent=s; showCheckResult(); }
+  else { const pv=document.getElementById('pinview'); pv.classList.add('err'); timers.push(setTimeout(()=>{pin='';renderPin();},450)); }
+}
+function simQR(){ curStudent=STUDENTS['1234']; showCheckResult(); }
+
+function showCheckResult(){
+  const n=curStudent.name;
+  const icon=document.getElementById('r-icon');
+  if(mode==='in'){
+    icon.className='rbig s'; icon.innerHTML='<i data-lucide="log-in" style="width:64px;height:64px"></i>';
+    document.getElementById('r-title').textContent = n+' 학생 등원 완료!';
+    document.getElementById('r-sub').textContent = '오후 4:20 등원 · 좋은 하루 보내세요 🎉';
+    document.getElementById('r-msg').textContent = '[국풍국어학원-신갈관] '+n+' 학생이 16:20 등원했습니다.';
+  } else {
+    icon.className='rbig m'; icon.innerHTML='<i data-lucide="log-out" style="width:64px;height:64px"></i>';
+    document.getElementById('r-title').textContent = n+' 학생 하원 완료!';
+    document.getElementById('r-sub').textContent = '좌석 반납 완료 · 오늘 자습 3시간 20분 👏';
+    document.getElementById('r-msg').textContent = '[국풍국어학원-신갈관] '+n+' 학생이 19:40 하원했습니다. (오늘 자습 3시간 20분)';
+  }
+  document.getElementById('r-kakao').style.display='block';
+  go('result'); countdown('cd',5);
+  lucide.createIcons();
+}
+
+/* ---------- SEAT ---------- */
+const ROOMS = {
+  '1':{name:'1자습실', cols:4, total:20, used:[1,3,6,7,9,10,12,15,16,18,20], block:[19]},
+  '2':{name:'2자습실', cols:4, total:16, used:[2,5,8], block:[11]},
+};
+let room='1', selSeat=null, selTimeIdx=1;
+const TIME_LABELS=['지금부터 2시간 (~18:20)','오후 10시까지','직접 지정한 시간'];
+
+function openSeat(){ room='1'; selSeat=null; selTimeIdx=1; renderTabs(); renderSeats(); renderSel(); renderTimes(); go('seat'); }
+function switchRoom(r){ room=r; selSeat=null;
+  document.querySelectorAll('#tabs .tab').forEach((t,i)=>t.classList.toggle('on', String(i+1)===r));
+  renderSeats(); renderSel();
+}
+function remaining(r){ const R=ROOMS[r]; return R.total - R.used.length - R.block.length; }
+function renderTabs(){
+  document.getElementById('tab1').textContent = remaining('1')+'/20 남음';
+  document.getElementById('tab2').textContent = remaining('2')+'/16 남음';
+  document.querySelectorAll('#tabs .tab').forEach((t,i)=>t.classList.toggle('on', i===0));
+}
+function renderSeats(){
+  const R=ROOMS[room]; const g=document.getElementById('grid');
+  const rows=R.total/R.cols;
+  g.style.gridTemplateColumns='repeat('+R.cols+',1fr)';
+  g.style.gridTemplateRows='repeat('+rows+',1fr)';
+  let html='';
+  for(let n=1;n<=R.total;n++){
+    let cls='free', tag='';
+    if(R.block.includes(n)){cls='block'; tag='<small>점검</small>';}
+    else if(R.used.includes(n)){cls='used';}
+    if(selSeat===n){cls='mine'; tag='<small>선택</small>';}
+    const nn=String(n).padStart(2,'0');
+    html+=`<div class="seat ${cls}" onclick="pickSeat(${n})">${nn}${tag}</div>`;
+  }
+  g.innerHTML=html;
+}
+function pickSeat(n){
+  const R=ROOMS[room];
+  if(R.used.includes(n)||R.block.includes(n)) return;
+  selSeat=n; renderSeats(); renderSel();
+}
+function renderSel(){
+  const numEl=document.getElementById('sel-num');
+  const btn=document.getElementById('confirm');
+  if(selSeat){
+    numEl.className='s'; numEl.textContent=selSeat;
+    document.getElementById('sel-title').textContent = ROOMS[room].name+' '+selSeat+'번';
+    document.getElementById('sel-sub').textContent = '선택됨 · 예약을 확인하세요';
+    btn.disabled=false; btn.textContent=selSeat+'번 자리 예약하기';
+  } else {
+    numEl.className='s empty'; numEl.textContent='미선택';
+    document.getElementById('sel-title').textContent='자리를 선택하세요';
+    document.getElementById('sel-sub').textContent='빈자리를 터치하면 선택됩니다';
+    btn.disabled=true; btn.textContent='자리를 선택하세요';
+  }
+}
+function selTime(i){ selTimeIdx=i; renderTimes(); }
+function renderTimes(){ document.querySelectorAll('#times .time').forEach((t,i)=>t.classList.toggle('on', i===selTimeIdx)); }
+
+function confirmSeat(){
+  const icon=document.getElementById('r-icon');
+  icon.className='rbig a'; icon.innerHTML='<i data-lucide="armchair" style="width:60px;height:60px"></i>';
+  document.getElementById('r-title').textContent = ROOMS[room].name+' '+selSeat+'번 예약 완료!';
+  document.getElementById('r-sub').textContent = '이용 시간: '+TIME_LABELS[selTimeIdx]+' · 자리에서 좌석 QR을 한번 더 찍어 착석 확인하세요';
+  document.getElementById('r-kakao').style.display='none';
+  go('result'); countdown('cd',5);
+  lucide.createIcons();
+}
+
+/* ---------- RESULT helper ---------- */
+function resultScreen(cls, iconName, title, sub, kakaoMsg){
+  const icon=document.getElementById('r-icon');
+  icon.className='rbig '+cls; icon.innerHTML='<i data-lucide="'+iconName+'" style="width:60px;height:60px"></i>';
+  document.getElementById('r-title').textContent=title;
+  document.getElementById('r-sub').textContent=sub;
+  const k=document.getElementById('r-kakao');
+  if(kakaoMsg){ k.style.display='block'; document.getElementById('r-msg').textContent=kakaoMsg; }
+  else k.style.display='none';
+  go('result'); countdown('cd',5); lucide.createIcons();
+}
+const fmt = n => '₩'+n.toLocaleString();
+
+/* ---------- 수강신청 ---------- */
+const COURSES=[
+  {name:'고1 국어 정규반', t:'김선우 선생님', when:'월·수·금 17:00–18:30', left:3},
+  {name:'고2 문학 심화', t:'이정민 선생님', when:'화·목 18:30–20:00', left:5},
+  {name:'고2 독서(비문학) 집중', t:'박서준 선생님', when:'월·목 19:00–20:30', left:2},
+  {name:'고3 수능국어 실전', t:'최예린 선생님', when:'화·금 20:00–21:30', left:0},
+  {name:'고3 언어와 매체', t:'정하늘 선생님', when:'토 14:00–17:00', left:6},
+];
+let selCourse=null;
+function openCourse(){ selCourse=null; renderCourses(); updateCourseBar(); go('course'); }
+function renderCourses(){
+  document.getElementById('course-list').innerHTML = COURSES.map((c,i)=>{
+    const full=c.left===0, cls='litem'+(full?' full':'')+(selCourse===i?' on':'');
+    const tag = full?'<span class="tagb full">마감</span>':'<span class="tagb ok">잔여 '+c.left+'석</span>';
+    return `<div class="${cls}" onclick="selectCourse(${i})">
+      <div class="ci"><i data-lucide="book-open" style="width:24px;height:24px"></i></div>
+      <div class="info"><b>${c.name}</b><p>${c.t} · ${c.when}</p></div>
+      <div class="right">${tag}<div class="radio"></div></div></div>`;
+  }).join('');
+  lucide.createIcons();
+}
+function selectCourse(i){ if(COURSES[i].left===0) return; selCourse=i; renderCourses(); updateCourseBar(); }
+function updateCourseBar(){
+  const b=document.getElementById('course-btn'), s=document.getElementById('course-sum');
+  if(selCourse!=null){ s.innerHTML='<b>'+COURSES[selCourse].name+'</b><span>'+COURSES[selCourse].when+'</span>'; b.disabled=false; }
+  else { s.innerHTML='<b>강좌를 선택하세요</b><span>고등부 국어 5개 강좌</span>'; b.disabled=true; }
+}
+function confirmCourse(){ resultScreen('s','book-open','수강신청 접수 완료!', COURSES[selCourse].name+' · 데스크 확인 후 안내드립니다', null); }
+
+/* ---------- 교재신청 ---------- */
+const BOOKS=[
+  {title:'고등 국어 개념완성', sub:'문법·문학·독서 기본서', price:18000, g:['#12a594','#0d9b8a']},
+  {title:'수능특강 문학 분석노트', sub:'작품 해설 워크북', price:14000, g:['#ef4444','#b91c1c']},
+  {title:'비문학 독해 트레이닝', sub:'고2 독서 집중', price:13000, g:['#0090ff','#0d74ce']},
+  {title:'고전시가 총정리', sub:'필수 작품 80선', price:12000, g:['#8b5cf6','#6d28d9']},
+  {title:'어휘력 1200', sub:'고등 필수 어휘', price:11000, g:['#10b981','#047857']},
+  {title:'고3 실전 모의고사', sub:'봉투형 8회분', price:16000, g:['#ef4444','#b91c1c']},
+];
+let selBooks=new Set();
+function openBook(){ selBooks=new Set(); renderBooks(); updateBookBar(); go('book'); }
+function renderBooks(){
+  document.getElementById('book-grid').innerHTML = BOOKS.map((b,i)=>{
+    const on=selBooks.has(i);
+    return `<div class="bookcard${on?' on':''}" onclick="toggleBook(${i})">
+      <div class="cover" style="background:linear-gradient(145deg,${b.g[0]},${b.g[1]})"><i data-lucide="book-marked" style="width:42px;height:42px"></i></div>
+      <div class="chk"><i data-lucide="check" style="width:16px;height:16px"></i></div>
+      <div class="bmeta"><b>${b.title}</b><span>${b.sub}</span><span class="price">${fmt(b.price)}</span></div></div>`;
+  }).join('');
+  lucide.createIcons();
+}
+function toggleBook(i){ selBooks.has(i)?selBooks.delete(i):selBooks.add(i); renderBooks(); updateBookBar(); }
+function updateBookBar(){
+  const b=document.getElementById('book-btn'), s=document.getElementById('book-sum');
+  if(selBooks.size){ let tot=0; selBooks.forEach(i=>tot+=BOOKS[i].price);
+    s.innerHTML='<b>'+selBooks.size+'권 선택 · '+fmt(tot)+'</b><span>데스크에서 수령·결제</span>'; b.disabled=false; }
+  else { s.innerHTML='<b>교재를 선택하세요</b><span>복수 선택 가능</span>'; b.disabled=true; }
+}
+function confirmBook(){ let tot=0; selBooks.forEach(i=>tot+=BOOKS[i].price);
+  resultScreen('s','notebook-pen','교재신청 접수 완료!', selBooks.size+'권 · '+fmt(tot)+' · 준비되면 알림드립니다', null); }
+
+/* ---------- 면담신청 ---------- */
+const TEACHERS=['김선우(고1)','이정민(고2)','박서준(고2)','최예린(고3)','정하늘(고3)'];
+const C_DATES=[{d:'21',w:'오늘'},{d:'22',w:'월'},{d:'23',w:'화'},{d:'24',w:'수'},{d:'25',w:'목'},{d:'26',w:'금'}];
+const C_TIMES=['16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30'];
+const C_BOOKED=[2,5];
+let cT=0,cD=null,cS=null;
+function openConsult(){ cT=0; cD=null; cS=null; renderConsult(); updateConsultBar(); go('consult'); }
+function renderConsult(){
+  document.getElementById('consult-teachers').innerHTML = TEACHERS.map((t,i)=>`<div class="chip${cT===i?' on':''}" onclick="cSel('T',${i})">${t}</div>`).join('');
+  document.getElementById('consult-dates').innerHTML = C_DATES.map((d,i)=>`<div class="date${cD===i?' on':''}" onclick="cSel('D',${i})"><b>${d.d}</b><small>${d.w}</small></div>`).join('');
+  document.getElementById('consult-slots').innerHTML = C_TIMES.map((t,i)=>{
+    const dis=C_BOOKED.includes(i);
+    return `<div class="slot${dis?' dis':''}${cS===i?' on':''}" ${dis?'':`onclick="cSel('S',${i})"`}>${t}</div>`;
+  }).join('');
+}
+function cSel(k,i){ if(k==='T')cT=i; if(k==='D')cD=i; if(k==='S')cS=i; renderConsult(); updateConsultBar(); }
+function updateConsultBar(){
+  const b=document.getElementById('consult-btn'), s=document.getElementById('consult-sum');
+  if(cD!=null&&cS!=null){ s.innerHTML='<b>6/'+C_DATES[cD].d+'('+C_DATES[cD].w+') '+C_TIMES[cS]+'</b><span>'+TEACHERS[cT]+' 면담</span>'; b.disabled=false; }
+  else { s.innerHTML='<b>날짜·시간을 선택하세요</b><span>'+TEACHERS[cT]+' 면담</span>'; b.disabled=true; }
+}
+function confirmConsult(){ resultScreen('s','messages-square','면담 예약 완료!', '6/'+C_DATES[cD].d+'('+C_DATES[cD].w+') '+C_TIMES[cS]+' · '+TEACHERS[cT], null); }
+
+/* ---------- countdown ---------- */
+function countdown(elId, sec){
+  const el=document.getElementById(elId); let s=sec; el.textContent=s;
+  const iv=setInterval(()=>{ s--; el.textContent=s; if(s<=0){ clearInterval(iv); go('home'); } },1000);
+  timers.push(iv);
+}
+</script>
+</body>
+</html>

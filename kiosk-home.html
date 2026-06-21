@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
+<title>키오스크 — 홈</title>
+<link rel="stylesheet" href="kiosk.css">
+<style>
+  .body{flex:1;display:flex;flex-direction:column;padding:30px 32px 0;}
+  .greet{margin-bottom:24px;}
+  .greet h1{font-size:31px;font-weight:700;letter-spacing:-0.02em;}
+  .greet p{font-size:17px;color:var(--muted-fg);margin-top:6px;}
+  .acts{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(3,1fr);gap:16px;flex:1;}
+  .tile{grid-column:span 3;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);
+    padding:20px 24px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:18px;}
+  .tile:hover{border-color:var(--primary);box-shadow:0 6px 20px rgba(18,165,148,.12);transform:translateY(-2px);}
+  .tile .ic{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .tile .txt{flex:1;}
+  .tile h2{font-size:23px;font-weight:700;letter-spacing:-0.01em;}
+  .tile p{font-size:14px;color:var(--muted-fg);margin-top:4px;}
+  /* primary check-in tiles */
+  .tile.in .ic{background:var(--primary);color:#fff;}
+  .tile.in{border-color:var(--primary-soft);}
+  .tile.out .ic{background:var(--soft);color:var(--ink);}
+  .arrow{color:var(--primary);flex-shrink:0;}
+
+  /* seat tile - wide accent */
+  .seat-tile{grid-column:span 6;background:linear-gradient(100deg,#fff 60%,var(--accent-soft));
+    border-color:#f3c69e;display:flex;flex-direction:row;align-items:center;gap:24px;padding:24px 28px;}
+  .seat-tile .ic{background:var(--accent);color:#fff;margin-bottom:0;}
+  .seat-tile .txt{flex:1;}
+  .seat-tile h2{font-size:23px;}
+  .seat-stat{display:flex;gap:10px;margin-top:10px;}
+  .badge{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600;}
+  .badge.mint{background:var(--primary-soft);color:var(--primary-active);}
+
+  /* secondary cards */
+  .scard{grid-column:span 2;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:24px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;
+    cursor:pointer;transition:.15s;}
+  .scard:hover{border-color:var(--primary);background:var(--primary-soft);transform:translateY(-2px);}
+  .scard .ic{width:54px;height:54px;border-radius:14px;background:var(--soft);color:var(--primary-active);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .scard b{font-size:20px;font-weight:700;}
+  .scard span{display:block;font-size:14px;color:var(--muted-fg);margin-top:4px;}
+
+  /* notice ticker */
+  .notice{flex-shrink:0;margin-top:18px;height:52px;display:flex;align-items:center;gap:12px;
+    background:var(--surface);border-top:1px solid var(--line);padding:0 32px;
+    margin-left:-32px;margin-right:-32px;}
+  .notice .lbl{background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;}
+  .notice p{font-size:15px;color:var(--muted-fg);}
+</style>
+</head>
+<body>
+<div class="screen">
+  <!-- top -->
+  <div class="topbar">
+    <div class="logo"><i data-lucide="graduation-cap" class="lucide"></i></div>
+    <div class="brand">국풍국어학원<small>신갈관</small></div>
+    <div class="spacer"></div>
+    <div class="clock"><span>2026년 6월 21일 (일)</span><b>오후 4:20</b></div>
+    <div class="pill"><span class="dot"></span>현재 원내 23명</div>
+  </div>
+
+  <div class="body">
+    <div class="greet">
+      <h1>안녕하세요 👋 무엇을 도와드릴까요?</h1>
+      <p>화면의 버튼을 눌러 진행하세요. 등·하원은 QR 또는 PIN으로 체크인됩니다.</p>
+    </div>
+
+    <div class="acts">
+      <div class="tile in">
+        <div class="ic"><i data-lucide="log-in" class="lucide" style="width:28px;height:28px"></i></div>
+        <div class="txt">
+          <h2>등원 체크인</h2>
+          <p>QR 스캔 또는 PIN 입력 · 학부모 알림 발송</p>
+        </div>
+        <i data-lucide="arrow-right" class="lucide arrow" style="width:26px;height:26px"></i>
+      </div>
+      <div class="tile out">
+        <div class="ic"><i data-lucide="log-out" class="lucide" style="width:28px;height:28px"></i></div>
+        <div class="txt">
+          <h2>하원 체크아웃</h2>
+          <p>좌석 자동 반납 · 오늘 자습시간 알림</p>
+        </div>
+        <i data-lucide="arrow-right" class="lucide arrow" style="width:26px;height:26px;color:var(--muted-fg)"></i>
+      </div>
+
+      <div class="scard"><div class="ic"><i data-lucide="book-open" class="lucide"></i></div><div><b>수강신청</b><span>강좌 신청·변경</span></div></div>
+      <div class="scard"><div class="ic"><i data-lucide="notebook-pen" class="lucide"></i></div><div><b>교재신청</b><span>교재 주문·수령</span></div></div>
+      <div class="scard"><div class="ic"><i data-lucide="messages-square" class="lucide"></i></div><div><b>면담신청</b><span>선생님 상담 예약</span></div></div>
+
+      <div class="tile seat-tile">
+        <div class="ic" style="width:64px;height:64px;border-radius:18px"><i data-lucide="armchair" class="lucide" style="width:32px;height:32px"></i></div>
+        <div class="txt">
+          <h2>자습실 자리 예약</h2>
+          <div class="seat-stat">
+            <span class="badge mint"><i data-lucide="check" style="width:14px;height:14px"></i>1자습실 8석 남음</span>
+            <span class="badge mint"><i data-lucide="check" style="width:14px;height:14px"></i>2자습실 10석 남음</span>
+          </div>
+        </div>
+        <i data-lucide="arrow-right" class="lucide" style="width:30px;height:30px;color:var(--accent)"></i>
+      </div>
+    </div>
+
+    <div class="notice">
+      <span class="lbl">공지</span>
+      <p>7월 모의고사 신청 ~6/30까지 · 여름 특강 시간표가 업데이트되었습니다. 데스크에서 확인하세요.</p>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>
